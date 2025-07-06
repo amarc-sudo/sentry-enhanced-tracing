@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<psalm
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    errorLevel="1"
+    resolveFromConfigFile="true"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="true"
+    findUnusedVariablesAndParams="true"
+    findUnusedPsalmSuppress="true"
+    strictBinaryOperands="true"
+    rememberPropertyAssignmentsAfterCall="true"
+    checkForThrowsDocblock="true"
+    checkForThrowsInGlobalScope="true"
+    ensureArrayStringOffsetsExist="true"
+    ensureArrayIntOffsetsExist="true"
+    reportMixedIssues="true"
+    cacheDirectory="var/cache/psalm"
+>
+    <projectFiles>
+        <directory name="src"/>
+        <directory name="tests"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+            <directory name="var"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <LessSpecificReturnType errorLevel="info"/>
+        <MoreSpecificReturnType errorLevel="info"/>
+        <MissingClosureReturnType errorLevel="info"/>
+        <MissingReturnType errorLevel="info"/>
+        <MissingPropertyType errorLevel="info"/>
+        <InvalidDocblock errorLevel="info"/>
+        <MissingConstructor errorLevel="info"/>
+        <MissingImmutableAnnotation errorLevel="info"/>
+        <UndefinedGlobalVariable errorLevel="info"/>
+        <UnusedClass errorLevel="info"/>
+        <UnusedMethod errorLevel="info"/>
+        <UnusedProperty errorLevel="info"/>
+        
+        <!-- Symfony specific -->
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+        
+        <!-- Sentry SDK related - mixed types are normal -->
+        <MixedAssignment>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedAssignment>
+        
+        <MixedArgument>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedArgument>
+        
+        <MixedMethodCall>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedMethodCall>
+        
+        <MixedArrayAccess>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedArrayAccess>
+        
+        <MixedArrayOffset>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedArrayOffset>
+        
+        <MixedArrayAssignment>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedArrayAssignment>
+        
+        <MixedOperand>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedOperand>
+        
+        <!-- Risky comparisons - allow for practical usage -->
+        <RiskyTruthyFalsyComparison>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </RiskyTruthyFalsyComparison>
+        
+        <!-- Type coercion for array compatibility -->
+        <MixedArgumentTypeCoercion>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MixedArgumentTypeCoercion>
+        
+        <!-- Invalid operands for strict math -->
+        <InvalidOperand>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </InvalidOperand>
+    </issueHandlers>
+
+    <plugins>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+    </plugins>
+</psalm> 

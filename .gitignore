@@ -1,0 +1,86 @@
+# PHP Dependencies
+vendor/
+composer.lock
+
+# IDE & Editor configuration files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.project
+.buildpath
+.settings/
+*.swp
+*.swo
+*~
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+logs/
+log/
+
+# Cache files
+cache/
+tmp/
+temp/
+.cache/
+.tmp/
+var/cache/
+
+# CI/CD artifacts
+phpcs-report.xml
+*.xml
+*.junit
+
+# Test and coverage files
+.phpunit.result.cache
+phpunit.xml
+.phpunit.cache
+coverage/
+coverage.xml
+clover.xml
+build/
+reports/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build/distribution files
+dist/
+build/
+*.phar
+
+# Generated documentation files
+docs/_build/
+docs/build/
+
+# Symfony specific files
+var/
+public/bundles/
+public/uploads/
+
+# Backup files
+*.bak
+*.backup
+
+# Profiling files
+xdebug.out
+*.prof
+
+# Package manager files
+.composer/
+composer.phar
+
+# CI/CD files
+.gitlab-ci-local/ 

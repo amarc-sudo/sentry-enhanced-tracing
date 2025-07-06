@@ -1,0 +1,28 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Event Listeners
+    AmarcSudo\SentryEnhancedTracing\EventListener\SentryListenerPhasesTracer:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestStart, priority: 99995 }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestEnd, priority: -100000 }
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelViewStart, priority: 100000 }
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelViewEnd, priority: -100000 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponseStart, priority: 100000 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponseEnd, priority: -100000 }
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelExceptionStart, priority: 100000 }
+            - { name: kernel.event_listener, event: kernel.terminate, method: onKernelTerminate }
+
+    # User Context Listener - Executes after JWT authentication
+    # Requires LexikJWTAuthenticationBundle to be installed and configured
+    AmarcSudo\SentryEnhancedTracing\EventListener\SentryUserContextListener:
+        tags:
+            # Primary listener: executes after JWT authentication to capture authenticated user
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJwtAuthenticated, priority: 100 }
+            # Fallback listeners for other contexts (non-JWT authentication)
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 0 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -99999 }
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 99999 }
