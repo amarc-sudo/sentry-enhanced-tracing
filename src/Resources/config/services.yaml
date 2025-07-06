@@ -9,12 +9,24 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestStart, priority: 99995 }
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestEnd, priority: -100000 }
-            - { name: kernel.event_listener, event: kernel.view, method: onKernelViewStart, priority: 100000 }
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelViewStart, priority: 99999 }
             - { name: kernel.event_listener, event: kernel.view, method: onKernelViewEnd, priority: -100000 }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponseStart, priority: 100000 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponseStart, priority: 99999 }
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponseEnd, priority: -100000 }
-            - { name: kernel.event_listener, event: kernel.exception, method: onKernelExceptionStart, priority: 100000 }
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelExceptionStart, priority: 99999 }
             - { name: kernel.event_listener, event: kernel.terminate, method: onKernelTerminate }
+
+    # Controller Tracer - Traces controllers marked with TraceSentryController attribute
+    # Uses extreme priorities to measure ONLY controller execution time
+    AmarcSudo\SentryEnhancedTracing\EventListener\SentryApiPlatformControllerTracer:
+        tags:
+            # Start tracing just BEFORE controller execution (very low priority)
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -99999 }
+            # Finish tracing just AFTER controller execution (very high priority on both events)
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 100000 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: 100000 }
+            # Handle exceptions to ensure proper span cleanup
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 100000 }
 
     # User Context Listener - Executes after JWT authentication
     # Requires LexikJWTAuthenticationBundle to be installed and configured

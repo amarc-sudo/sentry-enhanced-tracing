@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-01-18
+
+### Added
+- **TraceSentryController Attribute**: New PHP 8+ attribute for explicit controller tracing
+- **Controller-specific tracing**: Precise measurement of controller execution time
+- **API Platform controller support**: Automatic detection and tracing of `__invoke()` controllers
+- **Attribute-based configuration**: Custom operation names, descriptions, and tags per controller
+- **Precise timing measurement**: Excludes event listeners, measures only controller business logic
+- **Active span management**: Automatic child span capture for database queries, cache operations, etc.
+- **Exception handling**: Robust cleanup and error tracking for traced controllers
+- **Controller metadata**: Rich span data including controller name, type, and execution status
+
+### Features
+- **SentryApiPlatformControllerTracer**: New event listener for controller-specific tracing
+- **TraceSentryController attribute**: Configurable per-controller or per-method tracing
+- **Extreme priority listeners**: Uses -99999/100000 priorities for precise timing
+- **Automatic child span capture**: Database queries, cache operations become controller children
+- **Controller execution isolation**: Measures only business logic, excludes framework overhead
+- **Custom operation naming**: Configurable span names and descriptions
+- **Flexible tagging system**: Add custom metadata to controller spans
+- **Multi-event cleanup**: Handles view, response, and exception events for span completion
+
+### Examples
+- **traced-controller-usage.php**: Comprehensive examples of attribute usage patterns
+- **Multiple controller patterns**: Support for both invokable and action method controllers
+- **Attribute configuration**: Examples of custom operation names, descriptions, and tags
+
+### Technical Implementation
+- **Reflection-based attribute detection**: Supports both class and method-level attributes
+- **Sentry Hub integration**: Proper active span management for child capture
+- **Performance optimization**: Extreme event priorities for precise measurement
+- **Memory-efficient**: Minimal overhead with proper resource cleanup
+- **Exception-safe**: Robust error handling with proper span finalization
+
+### Documentation
+- **Usage examples**: Complete controller tracing patterns
+- **Configuration reference**: All attribute options and parameters
+- **Performance impact**: Detailed explanation of timing precision
+- **Best practices**: Guidelines for optimal controller tracing
+
 ## [1.0.0] - 2025-07-06
 
 ### Added

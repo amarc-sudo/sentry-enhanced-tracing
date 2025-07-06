@@ -29,6 +29,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class ExampleController extends AbstractController
 {
+    #[TraceSentryController]
     #[Route('/api/example', name: 'api_example')]
     public function example(
         EntityManagerInterface $em,
