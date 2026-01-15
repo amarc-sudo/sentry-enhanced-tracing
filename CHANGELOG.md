@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.1] - 2025-01-18
+## [1.1.0] - 2026-01-15
+
+### Added
+- **Symfony Messenger queue monitoring**: automatic `queue.publish` span on dispatch and `queue.process` transaction on workers.
+- **SentryTraceStamp / SentryUserStamp**: traceparent+baggage and user context propagation across Messenger hops.
+- **Metadata enrichment**: message id, destination, body size, retry count, receive latency mapped to Sentry queue fields.
+- **Auto-registration**: listeners wired by default; user propagation toggle via `sentry_enhanced_tracing.messenger.propagate_user`.
+- **Documentation & example**: Messenger queue section in docs and `examples/messenger-queue-monitoring.php`.
+
+### Changed
+- **composer.json**: declare `symfony/messenger` as a runtime dependency.
+
+### Tests
+- Added unit tests for Messenger metadata extractor and trace stamp.
+
+## [1.0.1] - 2025-07-18
 
 ### Added
 - **TraceSentryController Attribute**: New PHP 8+ attribute for explicit controller tracing

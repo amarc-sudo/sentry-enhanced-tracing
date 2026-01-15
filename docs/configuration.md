@@ -159,3 +159,38 @@ After installation, you should see in your Sentry dashboard:
 2. **Development**: Use full tracing (`traces_sample_rate: 1.0`)
 3. **Security**: Be careful with PII data capture
 4. **Performance**: Monitor overhead in high-traffic apps 
+
+## Messenger queue monitoring (Sentry Queues)
+
+### Activation
+- No extra config when using Symfony Messenger: listeners are auto-registered.
+- A `queue.publish` span is created on dispatch, and a `queue.process` transaction is started per message on the worker.
+
+### Context propagation
+- Traceparent and baggage are added via `SentryTraceStamp` to link producer/consumer.
+- The authenticated user is propagated via `SentryUserStamp` (id, username, email if available). To disable:
+
+```yaml
+# config/services.yaml
+parameters:
+    sentry_enhanced_tracing.messenger.propagate_user: false
+```
+
+### Metadata sent to Sentry
+- `messaging.message.id` (TransportMessageIdStamp/UuidStamp)
+- `messaging.destination.name` (transport or bus)
+- `messaging.message.body.size` (JSON/serialize estimation)
+- `messaging.message.retry.count` (RedeliveryStamp)
+- `messaging.message.receive.latency` (ms, based on publish_time)
+
+### Minimal example
+
+```php
+// Dispatch
+$bus->dispatch(new EmailJob($payload));
+
+// Worker (standard messenger:consume)
+php bin/console messenger:consume async
+```
+
+Transactions appear in Sentry > Performance > Queues, linked to parent HTTP requests or producer jobs through the injected traceparent/baggage.

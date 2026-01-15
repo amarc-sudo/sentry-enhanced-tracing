@@ -16,8 +16,10 @@
         "symfony/dependency-injection": "^6.0|^7.0",
         "symfony/http-kernel": "^6.0|^7.0",
         "symfony/security-bundle": "^6.0|^7.0",
+        "symfony/messenger": "^6.0|^7.0",
         "lexik/jwt-authentication-bundle": "^2.16|^3.0",
-        "sentry/sentry-symfony": "^5.0"
+        "sentry/sentry-symfony": "^5.0",
+        "ramsey/uuid": "^4.7"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
