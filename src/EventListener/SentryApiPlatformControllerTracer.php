@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AmarcSudo\SentryEnhancedTracing\EventListener;
 
 use AmarcSudo\SentryEnhancedTracing\Attribute\TraceSentryController;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -60,11 +59,12 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
  *     }
  * }
  * ```
+ *
+ * The listeners are registered (with their precise priorities) through the
+ * bundle's services.yaml, so no #[AsEventListener] attributes are used here —
+ * that avoids double registration on Symfony 7+/8 and the non-repeatable
+ * attribute fatal error on Symfony 6.4.
  */
-#[AsEventListener(event: ControllerEvent::class, method: 'onKernelController')]
-#[AsEventListener(event: ViewEvent::class, method: 'onKernelView')]
-#[AsEventListener(event: ResponseEvent::class, method: 'onKernelResponse')]
-#[AsEventListener(event: ExceptionEvent::class, method: 'onKernelException')]
 class SentryApiPlatformControllerTracer
 {
     private ?\Sentry\Tracing\Span $activeSpan = null;
@@ -77,7 +77,7 @@ class SentryApiPlatformControllerTracer
      *
      * Uses very low priority (-99999) to execute just BEFORE the controller,
      * ensuring we measure only the controller execution time.
-     * 
+     *
      * @throws \ReflectionException
      */
     public function onKernelController(ControllerEvent $event): void
@@ -251,7 +251,7 @@ class SentryApiPlatformControllerTracer
 
     /**
      * Gets the TraceSentryController attribute from a controller.
-     * 
+     *
      * @throws \ReflectionException
      */
     private function getTraceSentryAttribute(mixed $controller): ?TraceSentryController

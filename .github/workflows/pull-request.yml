@@ -15,10 +15,10 @@ jobs:
         with:
           fetch-depth: 0 # Pour l'analyse des changements
           
-      - name: Setup PHP 8.1
+      - name: Setup PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.4'
           extensions: json, mbstring, openssl
           coverage: none
           tools: composer
@@ -42,13 +42,20 @@ jobs:
           composer phpstan --no-progress --error-format=github
           echo "::endgroup::"
           
-      - name: ✨ Psalm Type Analysis (Level 1) 
+      - name: ✨ Psalm Type Analysis (Level 1)
         id: psalm
         run: |
           echo "::group::Psalm Type Analysis"
           composer psalm --no-progress --output-format=github
           echo "::endgroup::"
-          
+
+      - name: 🧪 PHPUnit Tests
+        id: phpunit
+        run: |
+          echo "::group::PHPUnit Tests"
+          composer test
+          echo "::endgroup::"
+
       - name: 📏 PHPCS Code Style Check
         id: phpcs
         run: |

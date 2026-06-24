@@ -6,7 +6,6 @@ namespace AmarcSudo\SentryEnhancedTracing\EventListener;
 
 use Sentry\SentrySdk;
 use Sentry\Tracing\SpanContext;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -44,15 +43,12 @@ use Symfony\Component\HttpKernel\Event\TerminateEvent;
  * └── Event Listeners Phase: kernel.response (100ms)
  *     ├── twig.render: response.html.twig (85ms)
  *     └── cache.set: rendered:template:hash (3ms)
+ *
+ * Listeners are registered with their precise priorities through the bundle's
+ * services.yaml (not #[AsEventListener] attributes), which avoids double
+ * registration on Symfony 7+/8 and the non-repeatable attribute fatal error on
+ * Symfony 6.4.
  */
-#[AsEventListener(event: RequestEvent::class, method: 'onKernelRequestStart', priority: 99995)]
-#[AsEventListener(event: RequestEvent::class, method: 'onKernelRequestEnd', priority: -100000)]
-#[AsEventListener(event: ViewEvent::class, method: 'onKernelViewStart', priority: 100000)]
-#[AsEventListener(event: ViewEvent::class, method: 'onKernelViewEnd', priority: -100000)]
-#[AsEventListener(event: ResponseEvent::class, method: 'onKernelResponseStart', priority: 100000)]
-#[AsEventListener(event: ResponseEvent::class, method: 'onKernelResponseEnd', priority: -100000)]
-#[AsEventListener(event: ExceptionEvent::class, method: 'onKernelExceptionStart', priority: 100000)]
-#[AsEventListener(event: TerminateEvent::class, method: 'onKernelTerminate')]
 class SentryListenerPhasesTracer
 {
     private static array $activeSpans = [];

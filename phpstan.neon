@@ -4,10 +4,6 @@ parameters:
         - src
         - tests
     tmpDir: var/cache/phpstan
-    symfony:
-        console_application_loader: tests/console-loader.php
-    excludePaths:
-        - tests/bootstrap.php
     ignoreErrors:
         -
             identifier: missingType.iterableValue

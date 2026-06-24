@@ -45,15 +45,11 @@ final class SentryMessengerWorkerListener implements EventSubscriberInterface
 
         $traceStamp = $this->metadataExtractor->getTraceStamp($envelope);
         $context = $traceStamp instanceof SentryTraceStamp
-            ? \Sentry\continueTrace($traceStamp->getTraceparent(), $traceStamp->getBaggage())
+            ? \Sentry\continueTrace($traceStamp->getTraceparent(), $traceStamp->getBaggage() ?? '')
             : TransactionContext::make();
 
         $context->setOp('queue.process');
-        if (method_exists($context, 'setName')) {
-            $context->setName($envelope->getMessage()::class);
-        } elseif (property_exists($context, 'name')) {
-            $context->name = $envelope->getMessage()::class;
-        }
+        $context->setName($envelope->getMessage()::class);
 
         $transaction = \Sentry\startTransaction($context);
         SentrySdk::getCurrentHub()->setSpan($transaction);
@@ -96,10 +92,7 @@ final class SentryMessengerWorkerListener implements EventSubscriberInterface
         $this->enrichTransaction($transaction, $metadata);
         $transaction->setStatus(SpanStatus::internalError());
 
-        $throwable = $event->getThrowable();
-        if ($throwable !== null) {
-            SentrySdk::getCurrentHub()->captureException($throwable);
-        }
+        SentrySdk::getCurrentHub()->captureException($event->getThrowable());
 
         $transaction->finish();
 
@@ -169,9 +162,9 @@ final class SentryMessengerWorkerListener implements EventSubscriberInterface
             }
         }
 
-        if (!isset($metadata['messaging.destination.name']) && method_exists($event, 'getReceiverName')) {
+        if (!isset($metadata['messaging.destination.name'])) {
             $receiverName = $event->getReceiverName();
-            if ($receiverName) {
+            if ($receiverName !== '') {
                 $metadata['messaging.destination.name'] = $receiverName;
             }
         }

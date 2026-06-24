@@ -13,10 +13,10 @@ jobs:
     
     strategy:
       matrix:
-        php-version: ['8.1', '8.2', '8.3']
+        php-version: ['8.2', '8.3', '8.4']
         dependencies: ['highest']
         include:
-          - php-version: '8.1'
+          - php-version: '8.2'
             dependencies: 'lowest'
     
     steps:
@@ -68,7 +68,10 @@ jobs:
         
       - name: Run Psalm (Type Analysis)
         run: composer psalm
-        
+
+      - name: Run PHPUnit (Tests)
+        run: composer test
+
       - name: Archive code quality results
         if: failure()
         uses: actions/upload-artifact@v4
@@ -90,7 +93,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           extensions: json, mbstring, openssl
           coverage: none
           tools: composer
@@ -112,7 +115,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           extensions: json, mbstring, openssl
           coverage: none
           tools: composer

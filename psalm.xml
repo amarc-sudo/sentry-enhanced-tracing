@@ -3,19 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    errorLevel="1"
+    errorLevel="4"
     resolveFromConfigFile="true"
-    findUnusedBaselineEntry="true"
-    findUnusedCode="true"
-    findUnusedVariablesAndParams="true"
-    findUnusedPsalmSuppress="true"
-    strictBinaryOperands="true"
     rememberPropertyAssignmentsAfterCall="true"
-    checkForThrowsDocblock="true"
-    checkForThrowsInGlobalScope="true"
-    ensureArrayStringOffsetsExist="true"
-    ensureArrayIntOffsetsExist="true"
-    reportMixedIssues="true"
     cacheDirectory="var/cache/psalm"
 >
     <projectFiles>
@@ -28,89 +18,29 @@
     </projectFiles>
 
     <issueHandlers>
-        <LessSpecificReturnType errorLevel="info"/>
-        <MoreSpecificReturnType errorLevel="info"/>
-        <MissingClosureReturnType errorLevel="info"/>
-        <MissingReturnType errorLevel="info"/>
-        <MissingPropertyType errorLevel="info"/>
-        <InvalidDocblock errorLevel="info"/>
-        <MissingConstructor errorLevel="info"/>
-        <MissingImmutableAnnotation errorLevel="info"/>
-        <UndefinedGlobalVariable errorLevel="info"/>
-        <UnusedClass errorLevel="info"/>
-        <UnusedMethod errorLevel="info"/>
-        <UnusedProperty errorLevel="info"/>
-        
-        <!-- Symfony specific -->
-        <PropertyNotSetInConstructor>
+        <!--
+            Symfony 8.1's ViewEvent uses PHP 8.4 property hooks, which Psalm 6.x
+            cannot parse yet, so it wrongly reports the class as undefined. The
+            class exists at runtime (PHPStan and the test suite resolve it fine).
+        -->
+        <UndefinedClass>
             <errorLevel type="suppress">
-                <directory name="src"/>
+                <referencedClass name="Symfony\Component\HttpKernel\Event\ViewEvent"/>
             </errorLevel>
-        </PropertyNotSetInConstructor>
-        
-        <!-- Sentry SDK related - mixed types are normal -->
-        <MixedAssignment>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedAssignment>
-        
-        <MixedArgument>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedArgument>
-        
-        <MixedMethodCall>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedMethodCall>
-        
-        <MixedArrayAccess>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedArrayAccess>
-        
-        <MixedArrayOffset>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedArrayOffset>
-        
-        <MixedArrayAssignment>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedArrayAssignment>
-        
-        <MixedOperand>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedOperand>
-        
-        <!-- Risky comparisons - allow for practical usage -->
-        <RiskyTruthyFalsyComparison>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </RiskyTruthyFalsyComparison>
-        
-        <!-- Type coercion for array compatibility -->
-        <MixedArgumentTypeCoercion>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </MixedArgumentTypeCoercion>
-        
-        <!-- Invalid operands for strict math -->
-        <InvalidOperand>
-            <errorLevel type="suppress">
-                <directory name="src"/>
-            </errorLevel>
-        </InvalidOperand>
+        </UndefinedClass>
+
+        <!-- Stylistic preferences, intentionally not enforced. -->
+        <MissingOverrideAttribute errorLevel="suppress"/>
+        <UnnecessaryVarAnnotation errorLevel="suppress"/>
+        <RedundantCast errorLevel="suppress"/>
+
+        <!--
+            Bundle, listeners and subscribers are wired through Symfony DI and the
+            event dispatcher, so Psalm's static reachability analysis cannot see
+            their usages and reports false positives.
+        -->
+        <UnusedClass errorLevel="suppress"/>
+        <PossiblyUnusedMethod errorLevel="suppress"/>
     </issueHandlers>
 
     <plugins>

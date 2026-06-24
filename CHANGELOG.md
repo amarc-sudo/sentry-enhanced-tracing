@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Symfony 8 support**: dependency constraints widened to `^6.4|^7.0|^8.0`; validated against Symfony 8.1, lexik 3.2, sentry-symfony 5.10 and API Platform 4.x, down to Symfony 6.4 / sentry-symfony 5.0 (`--prefer-lowest`).
+- **PHPUnit in CI**: `composer test` script, `phpunit.xml.dist`, and a test step in both workflows (tests existed but were never run).
+- Explicit `symfony/config`, `symfony/event-dispatcher` and `symfony/yaml` runtime dependencies (previously relied on transitively).
+
+### Changed
+- **Minimum PHP raised to 8.2** to match the `readonly class` already used by the listeners (the `>=8.1` constraint could not actually run the code).
+- **CI matrix** updated to PHP 8.2/8.3/8.4 (8.1 can no longer parse the code); other jobs moved off PHP 8.1.
+- **Event listeners are now registered solely via `services.yaml`**, removing the redundant `#[AsEventListener]` attributes (see fixes below).
+- **Queue destination resolution** now prefers the real transport name over the message class, matching the OpenTelemetry `messaging.destination.name` convention and the publish-side logic.
+- Relaxed the Psalm configuration to a pragmatic level so `composer psalm` runs green (it previously could not pass and never ran clean).
+
+### Fixed
+- **Double-firing listeners on Symfony 7/8 and a fatal error on Symfony 6.4**: the tracing listeners declared both `#[AsEventListener]` attributes and `services.yaml` tags. On Symfony 7+ this registered every listener twice (duplicated spans); on Symfony 6.4 the non-repeatable `AsEventListener` attribute caused a fatal error.
+- **Messenger referenced non-existent Symfony classes**: removed `Symfony\Component\Messenger\Stamp\UuidStamp` and `Symfony\Component\Messenger\Event\DispatchEvent`, which do not exist in Symfony Messenger. The phantom `DispatchEvent` subscription never fired, so user propagation to workers was silently broken; trace/user stamping now runs on the real `SendMessageToTransportsEvent`.
+- **Broken transport detection**: the publish span read transports via a non-existent `getTransportNames()` (always empty); it now uses `SendMessageToTransportsEvent::getSenders()`.
+- **Type fixes** surfaced by static analysis on the latest SDKs: nullable baggage passed to `Sentry\continueTrace()`, a redundant non-null check on `getThrowable()`, and an int/float operand in the receive-latency calculation.
+- **Broken QA config**: `phpstan.neon` referenced non-existent `tests/bootstrap.php` and `tests/console-loader.php`, which crashed PHPStan.
+
 ## [1.1.0] - 2026-01-15
 
 ### Added

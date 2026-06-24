@@ -8,7 +8,6 @@ use AmarcSudo\SentryEnhancedTracing\User\EnhancedUserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
 use Sentry\State\Scope;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -27,10 +26,12 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
  * the Sentry scope with contextual information for better error tracking and performance monitoring.
  *
  * Note: This listener requires LexikJWTAuthenticationBundle to be installed and configured.
+ *
+ * Listeners (including the JWT authentication hook) are registered through the
+ * bundle's services.yaml rather than #[AsEventListener] attributes, which avoids
+ * double registration on Symfony 7+/8 and the non-repeatable attribute fatal
+ * error on Symfony 6.4.
  */
-#[AsEventListener(event: RequestEvent::class, method: 'onKernelRequest')]
-#[AsEventListener(event: ResponseEvent::class, method: 'onKernelResponse')]
-#[AsEventListener(event: ExceptionEvent::class, method: 'onKernelException')]
 readonly class SentryUserContextListener
 {
     public function __construct(private Security $security)
