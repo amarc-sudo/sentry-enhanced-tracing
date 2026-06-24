@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-06-24
+
 ### Added
 - **Symfony 8 support**: dependency constraints widened to `^6.4|^7.0|^8.0`; validated against Symfony 8.1, lexik 3.2, sentry-symfony 5.10 and API Platform 4.x, down to Symfony 6.4 / sentry-symfony 5.0 (`--prefer-lowest`).
 - **PHPUnit in CI**: `composer test` script, `phpunit.xml.dist`, and a test step in both workflows (tests existed but were never run).
